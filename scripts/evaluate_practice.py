@@ -105,6 +105,12 @@ def run_trackeval(trackeval_root: Path, run_name: str, benchmark: str, split: st
     """
     cmd = [
         sys.executable,
+        "-c",
+        # Tiến trình con không kế thừa các alias NumPy đã vá ở tiến trình cha.
+        "import runpy, sys; import numpy as np; "
+        "np.float = getattr(np, 'float', float); "
+        "np.int = getattr(np, 'int', int); "
+        "script = sys.argv.pop(1); runpy.run_path(script, run_name='__main__')",
         str(trackeval_root / "scripts" / "run_mot_challenge.py"),
         "--GT_FOLDER", str(trackeval_root / "data" / "gt" / "mot_challenge"),
         "--TRACKERS_FOLDER", str(trackeval_root / "data" / "trackers" / "mot_challenge"),
